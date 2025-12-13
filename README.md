@@ -1,7 +1,8 @@
 # ⛏️ Minecraft Crafting System: Backend & UI Challenge
 
-![Minecraft Logo Icon](https://img.icons8.com/color/48/000000/minecraft.png)
-
+![Unity](https://img.shields.io/badge/Unity-2022%2B-black?style=for-the-badge&logo=unity)
+![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
+![Status](https://img.shields.io/badge/Status-In_Progress-yellow?style=for-the-badge)
 ---
 
 ## 🎯 Project Goal

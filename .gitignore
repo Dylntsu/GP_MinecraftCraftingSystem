@@ -1,0 +1,28 @@
+# ------------------------------------
+# Archivos y Carpetas Generadas por Unity (IGNORAR)
+# ------------------------------------
+# El *crucial* - Ignora toda la carpeta Library (contiene archivos temporales grandes)
+/[Ll]ibrary/
+
+# Carpetas temporales del proceso de compilación
+/[Tt]emp/
+/[Oo]bj/
+
+# Carpetas de caché del Editor
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+
+# ------------------------------------
+# Archivos de Metadatos y Sistema Operativo (IGNORAR)
+# ------------------------------------
+# Archivos de caché del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos y carpetas de Visual Studio/IDE
+/[Vv]isual[Ss]tudio/
+.vs/
+*.csproj
+*.unityproj
+*.sln

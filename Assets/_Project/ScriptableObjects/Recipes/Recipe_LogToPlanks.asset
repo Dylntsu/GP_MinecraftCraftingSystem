@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8c973a916c94db40a0053525dc1348d, type: 3}
+  m_Name: Recipe_LogToPlanks
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  requiredItems:
+  - itemData: {fileID: 11400000, guid: b9e72c085294e6a43a44b11ba5d1b626, type: 2}
+    amount: 1
+  resultItem: {fileID: 11400000, guid: d13791e0e03ea2245a8b0367f42e560b, type: 2}
+  resultAmount: 4

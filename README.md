@@ -1,4 +1,4 @@
-# ⛏️ Minecraft Crafting System: Backend & UI Challenge
+<img width="1593" height="891" alt="image" src="https://github.com/user-attachments/assets/5338e911-644c-49ef-a2a2-c0e141d74e8b" /># ⛏️ Minecraft Crafting System: Backend & UI Challenge
 
 ![Unity](https://img.shields.io/badge/Unity-2025%2B-black?style=for-the-badge&logo=unity)
 ![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
@@ -35,6 +35,9 @@ The system is divided into three main, decoupled components:
 ### 3. The View (UI - Completed)
 * **✨ `InventoryUI.cs`:** The Visual Controller. Dynamically generates the 36 `Slot_Prefab` instances and associates them with their respective logical `InventorySlot` objects.
 * **✨ `SlotUI.cs`:** The individual View. Responsible **only** for drawing the Sprite and text based on the assigned `InventorySlot` content, and managing icon visibility if the slot is empty.
+
+---
+<img width="1593" height="891" alt="image" src="https://github.com/user-attachments/assets/4383fb0c-8ab0-473c-ab33-e4c4d9e9a3f8" />
 
 ---
 

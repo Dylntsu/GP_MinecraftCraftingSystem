@@ -1,4 +1,4 @@
-<img width="1593" height="891" alt="image" src="https://github.com/user-attachments/assets/5338e911-644c-49ef-a2a2-c0e141d74e8b" /># ⛏️ Minecraft Crafting System: Backend & UI Challenge
+# ⛏️ Minecraft Crafting System: Backend & UI Challenge
 
 ![Unity](https://img.shields.io/badge/Unity-2025%2B-black?style=for-the-badge&logo=unity)
 ![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)

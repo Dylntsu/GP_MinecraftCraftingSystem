@@ -84,4 +84,13 @@ public class CraftingGridManager : MonoBehaviour
         }
         return input;
     }
+
+    /// <summary>
+    /// Returns the list of UI slots in the crafting grid.
+    /// Used by CraftingManager to check recipes and consume ingredients.
+    /// </summary>
+    public List<SlotUI> GetGridSlots()
+    {
+        return inputSlots;
+    }
 }

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c9001170d590a42814f5b386d6ac77, type: 3}
   m_Name: Item_WoodenPickaxe
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  id: 
-  displayName: 
-  description: 
-  icon: {fileID: 0}
-  isStackable: 1
+  id: wooden_pickaxe
+  displayName: Wooden Pickaxe
+  description: Pico de Madera
+  icon: {fileID: 7552365996044939131, guid: 8237109341088984daffb10eacd107fe, type: 3}
+  isStackable: 0
   maxStackSize: 64

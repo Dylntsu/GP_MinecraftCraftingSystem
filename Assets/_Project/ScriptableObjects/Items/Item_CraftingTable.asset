@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c9001170d590a42814f5b386d6ac77, type: 3}
   m_Name: Item_CraftingTable
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  id: 
-  displayName: 
-  description: 
-  icon: {fileID: 0}
+  id: crafting_table
+  displayName: Crafting Table
+  description: Mesa de Trabajo
+  icon: {fileID: -595413337811282681, guid: ef21e46c2b349ad47bdbe88530fb959a, type: 3}
   isStackable: 1
   maxStackSize: 64

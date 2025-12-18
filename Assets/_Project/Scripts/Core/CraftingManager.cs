@@ -9,108 +9,125 @@ public class CraftingManager : MonoBehaviour
     [Header("Recipe Database")]
     public List<CraftingRecipe> availableRecipes;
 
-    public bool CanCraft(CraftingRecipe recipe)
-    {
-        // Verify the required ingredients in the recipe
-        foreach (RequiredItem required in recipe.requiredItems)
-        {
-            // Search for the total amount of the required item in the entire inventory
-            int totalOwned = CountItem(required.itemData); 
+    // Stores the currently detected recipe to be consumed later
+    private CraftingRecipe currentActiveRecipe;
 
-            // If the amount we have is less than required, canot craft
-            if (totalOwned < required.amount)
+    /// <summary>
+    /// Scans the crafting grid and updates the output slot if there is a match.
+    /// </summary>
+    public void CheckForRecipes()
+    {
+        // Get the logical slots of the grid through the GridManager
+        var gridSlots = FindFirstObjectByType<CraftingGridManager>().GetGridSlots();
+        List<RequiredItem> currentInput = new List<RequiredItem>();
+
+        // Collect what is currently on the crafting table
+        foreach (SlotUI slotUI in gridSlots)
+        {
+            if (slotUI.assignedSlot.item != null)
             {
-                Debug.Log($"Failed to craft {recipe.resultItem.displayName}: Missing {required.itemData.displayName}. Needed {required.amount}, have {totalOwned}.");
-                return false; // Fails on the first requirement not met
+                currentInput.Add(new RequiredItem
+                {
+                    itemData = slotUI.assignedSlot.item,
+                    amount = slotUI.assignedSlot.stackSize
+                });
             }
         }
 
-        // If the loop finishes without returning 'false', it means all requirements are met.
+        // Check if the input matches any recipe in the database
+        currentActiveRecipe = FindMatchingRecipe(currentInput);
+
+        // Find the output slot (OutputSlot)
+        // NOTE: It is more efficient to drag this reference in the Inspector if possible
+        GameObject outputObj = GameObject.Find("OutputSlot");
+        if (outputObj != null)
+        {
+            SlotUI outputSlotUI = outputObj.GetComponent<SlotUI>();
+            
+            if (currentActiveRecipe != null)
+            {
+                outputSlotUI.assignedSlot.UpdateSlot(currentActiveRecipe.resultItem, currentActiveRecipe.resultAmount);
+            }
+            else
+            {
+                outputSlotUI.assignedSlot.ClearSlot();
+            }
+            
+            outputSlotUI.UpdateSlotUI();
+        }
+    }
+
+    /// <summary>
+    /// Subtracts materials from the grid based on the active recipe.
+    /// </summary>
+    public void ConsumeIngredients(int times = 1)
+    {
+        if (currentActiveRecipe == null) return;
+
+        var gridSlots = FindFirstObjectByType<CraftingGridManager>().GetGridSlots();
+
+        foreach (var slotUI in gridSlots)
+        {
+            if (slotUI.assignedSlot.item != null)
+            {
+                // Check how much the recipe specifically asks for this item
+                var required = currentActiveRecipe.requiredItems.Find(i => i.itemData == slotUI.assignedSlot.item);
+                
+                if (required != null)
+                {
+                    // Proportional consumption: (amount required * times the result was removed)
+                    int totalToConsume = required.amount * times;
+                    slotUI.assignedSlot.RemoveStack(totalToConsume); 
+                    slotUI.UpdateSlotUI();
+                }
+            }
+        }
+        
+        // After consuming, the active recipe is cleared and the grid is rescanned
+        currentActiveRecipe = null;
+        CheckForRecipes();
+    }
+
+    public CraftingRecipe FindMatchingRecipe(List<RequiredItem> currentInput)
+    {
+        foreach (CraftingRecipe recipe in availableRecipes)
+        {
+            if (recipe.requiredItems.Count != currentInput.Count) continue;
+
+            bool recipeMatches = true;
+            foreach (RequiredItem required in recipe.requiredItems)
+            {
+                RequiredItem inputItem = currentInput.Find(i => i.itemData == required.itemData);
+
+                if (inputItem == null || inputItem.amount < required.amount)
+                {
+                    recipeMatches = false;
+                    break;
+                }
+            }
+
+            if (recipeMatches) return recipe;
+        }
+        return null;
+    }
+
+    public bool CanCraft(CraftingRecipe recipe)
+    {
+        foreach (RequiredItem required in recipe.requiredItems)
+        {
+            int totalOwned = CountItem(required.itemData); 
+            if (totalOwned < required.amount) return false;
+        }
         return true; 
     }
 
     private int CountItem(ItemData itemToCount)
     {
         int count = 0;
-        
-        // Iterate over all logical inventory slots
         foreach (InventorySlot slot in inventoryManager.inventory)
         {
-            // If the slot contains the item we are looking for
-            if (slot.item == itemToCount) 
-            {
-                // Add the stack amount
-                count += slot.stackSize;
-            }
+            if (slot.item == itemToCount) count += slot.stackSize;
         }
         return count;
-    }
-
-    public CraftingRecipe FindMatchingRecipe(List<RequiredItem> currentInput)
-    {
-        // Search for a matching recipe in the database
-        foreach (CraftingRecipe recipe in availableRecipes)
-        {
-            // Verify the number of ingredients: they must be equal
-            if (recipe.requiredItems.Count != currentInput.Count)
-            {
-                continue; // They can't match if they have different number of items
-            }
-
-            // Verify that each ingredient and quantity match (Shapeless Crafting)
-            bool recipeMatches = true;
-
-            foreach (RequiredItem required in recipe.requiredItems)
-            {
-                // Search for the required item in the player's input
-                RequiredItem playerInputItem = currentInput.Find(i => i.itemData == required.itemData);
-
-                if (playerInputItem == null || playerInputItem.amount < required.amount)
-                {
-                    // If the item is missing OR the quantity is less
-                    recipeMatches = false;
-                    break;
-                }
-            }
-
-            if (recipeMatches)
-            {
-                return recipe; // recipe found
-            }
-        }
-
-        return null; // If the loop ends, no recipe was found.
-    }
-
-    public void CheckForRecipes()
-    {
-        // Find all slots inside the "InputGrid" object
-        SlotUI[] inputSlots = GameObject.Find("InputGrid").GetComponentsInChildren<SlotUI>();
-        List<RequiredItem> currentInput = new List<RequiredItem>();
-
-        foreach (SlotUI slot in inputSlots)
-        {
-            if (slot.assignedSlot.item != null)
-            {
-                currentInput.Add(new RequiredItem {
-                    itemData = slot.assignedSlot.item,
-                    amount = slot.assignedSlot.stackSize
-                });
-            }
-        }
-
-        CraftingRecipe match = FindMatchingRecipe(currentInput);
-
-        // Update the OutputSlot
-        SlotUI outputSlot = GameObject.Find("OutputSlot").GetComponent<SlotUI>();
-        if (match != null)
-        {
-            outputSlot.assignedSlot.UpdateSlot(match.resultItem, match.resultAmount);
-        }
-        else
-        {
-            outputSlot.assignedSlot.ClearSlot();
-        }
-        outputSlot.UpdateSlotUI();
     }
 }

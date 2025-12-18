@@ -62,6 +62,21 @@ public class DragManager : MonoBehaviour
             visualInstance.transform.position = Input.mousePosition;
         }
     }
+    
+    public void AddDragStack(int amountToAdd)
+    {
+        if (currentDragData.IsHoldingItem)
+        {
+            // 1. Add the logical amount
+            currentDragData.amount += amountToAdd;
+
+            // 2. Update the visual (the number on the floating icon)
+            if (visualInstance != null)
+            {
+                visualInstance.SetVisualData(currentDragData.item.icon, currentDragData.amount);
+            }
+        }
+    }
 
     public void EndDrag()
     {

@@ -17,4 +17,5 @@ public class ItemData : ScriptableObject
     [Header("Inventory Logic")]
     public bool isStackable = true;
     public int maxStackSize = 64;
+    public int defaultResultAmount = 1;
 }

@@ -17,38 +17,56 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public bool AddItem(ItemData item, int amount)
+public bool AddItem(ItemData item, int amount)
     {
+        // 1. FIRST PHASE: Look for existing stacks (Only if stackable)
         if (item.isStackable)
         {
+            // Use inventory instead of inventorySlots
             foreach (var slot in inventory)
             {
-                // Checks if the item matches & if there is space available
+                // If we find the same item and it has space
                 if (slot.item == item && slot.stackSize < item.maxStackSize)
                 {
-                    slot.AddStack(amount);
+                    // Calculate how much free space remains
+                    int spaceLeft = item.maxStackSize - slot.stackSize;
                     
-                    if (inventoryUI != null) inventoryUI.UpdateUI();
-                    
-                    return true; 
+                    // Take what fits
+                    int amountToAdd = Mathf.Min(amount, spaceLeft);
+
+                    slot.AddStack(amountToAdd);
+                    amount -= amountToAdd;
                 }
+
+                // If we already distributed everything, break the loop
+                if (amount <= 0) break;
             }
         }
 
-        for (int i = 0; i < inventory.Length; i++)
+        // 2. SECOND PHASE: If items still remain, look for empty slots
+        if (amount > 0)
         {
-            if (inventory[i].item == null)
+            // Use inventory.Length
+            for (int i = 0; i < inventory.Length; i++)
             {
-                inventory[i].item = item;
-                inventory[i].stackSize = amount;
-                
-                if (inventoryUI != null) inventoryUI.UpdateUI();
-                
-                return true; 
+                if (inventory[i].item == null)
+                {
+                    int amountToAdd = Mathf.Min(amount, item.maxStackSize);
+
+                    inventory[i].item = item;
+                    inventory[i].stackSize = amountToAdd;
+                    
+                    amount -= amountToAdd;
+                }
+
+                if (amount <= 0) break;
             }
         }
 
-        Debug.Log("Full inventory");
-        return false;
-    } 
+        // Use UpdateUI which is the method you already had in your script
+        if (inventoryUI != null) inventoryUI.UpdateUI();
+
+        // Return true only if we managed to save EVERYTHING (amount reached 0)
+        return amount <= 0;
+    }
 }

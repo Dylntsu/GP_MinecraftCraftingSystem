@@ -11,14 +11,20 @@ public class SlotInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     public virtual void OnPointerDown(PointerEventData eventData)
     {
         // --- SHIFT + CLICK ---
+        if (HotbarUI.Instance != null)
+        {
+            HotbarUI.Instance.SetHighlightPosition(ui.GetComponent<RectTransform>());
+        }
+
+        // check shift key
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             HandleShiftClick();
             return;
         }
 
+        // if there is no item, we leave
         if (ui.assignedSlot == null || ui.assignedSlot.item == null) return;
-
         if (!DragManager.Instance.currentDragData.IsHoldingItem)
         {
             HandlePickUp(eventData);

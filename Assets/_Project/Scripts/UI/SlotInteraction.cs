@@ -1,12 +1,20 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SlotInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IDropHandler, IPointerEnterHandler
+public class SlotInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     protected SlotUI ui;
     protected static float lastPickUpTime; 
+    
+    protected Vector3 originalScale;
 
     private void Awake() => ui = GetComponent<SlotUI>();
+
+    protected virtual void Start()
+    {
+        // save original scale for hover effect
+        originalScale = transform.localScale;
+    }
 
     public virtual void OnPointerDown(PointerEventData eventData)
     {
@@ -35,11 +43,20 @@ public class SlotInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     // DRAG PAINTING (IPointerEnterHandler)
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
+        // hover effect 
+        transform.localScale = originalScale * 1.1f;
+
         // If the left mouse button is pressed and we have something in our hand
         if (Input.GetMouseButton(0) && DragManager.Instance.currentDragData.IsHoldingItem)
         {
             HandleDragPainting();
         }
+    }
+
+    public virtual void OnPointerExit(PointerEventData eventData)
+    {
+        // reset scale when mouse leaves
+        transform.localScale = originalScale;
     }
 
     protected virtual void HandleDragPainting()
@@ -67,7 +84,7 @@ public class SlotInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         }
     }
 
-        protected virtual void HandleShiftClick()
+    protected virtual void HandleShiftClick()
     {
         var slot = ui.assignedSlot;
         if (slot == null || slot.item == null) return;
@@ -174,7 +191,9 @@ public class SlotInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         ui.UpdateSlotUI();
         NotifyCrafting();
         
-        AudioManager.Instance.PlaySound(AudioManager.Instance.pickUpSound);
+        // audio
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySound(AudioManager.Instance.pickUpSound);
     }
 
     protected virtual void HandleDrop()
@@ -197,7 +216,10 @@ public class SlotInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         }
         ui.UpdateSlotUI();
         NotifyCrafting();
-        AudioManager.Instance.PlaySound(AudioManager.Instance.dropSound);
+        
+        // audio
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySound(AudioManager.Instance.dropSound);
     }
 
     protected void NotifyCrafting()
